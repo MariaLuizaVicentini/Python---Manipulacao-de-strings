@@ -1,65 +1,73 @@
-class ExtratorArgumentoUrl:  # Definição da classe responsável por extrair argumentos de uma URL
-    
-    def __init__(self, url): 
-        """Método construtor que inicializa a instância(atributos) da classe com a URL fornecida"""
-        # Verifica se a URL fornecida é válida, ou seja, se ela não esta vazia:
+class ExtratorArgumentoUrl:
+    """Classe responsável por extrair argumentos de uma URL."""
+
+    def __init__(self, url):
+        """Inicializa a instância com a URL fornecida, verificando sua validade."""
+        # Verifica se a URL fornecida é válida usando o método urlEhValida()
         if self.urlEhValida(url):
-            self.url = url  # self acessa o atributo 'url' e defini que ele recebe o argumento que equivale a URL
-        # Se não, se ela estiver vazia:
+            # Armazena a URL em letras minúsculas para padronização
+            self.url = url.lower()
         else:
-            # Lança um erro "Erro de pesquisa" caso a URL seja inválida
-            # 'raise' é uma palavra chave que significa "levantar" ela é utilizada para forçar uma exeção e interromper o fluxo do programa. 
-            raise LookupError("Erro de pesquisa: Url inválida!!!") 
+            # Se a URL for inválida, lança uma exceção do tipo LookupError
+            raise LookupError("Erro de pesquisa: URL inválida!")
 
     @staticmethod
     def urlEhValida(url):
-        """Método estático que verifica se a URL fornecida é válida"""
-        if url:  # Se a URL não for uma string vazia
-            return True  # Retorna True, indicando que é válida
-        else:
-            return False  # Retorna False, indicando que é inválida
+        """Verifica se a URL fornecida é válida."""
+        # Retorna True se a URL não for vazia (string não vazia é avaliada como True)
+        return bool(url)
 
     def encontraIndiceInicial(self, moedaBuscada):
-        """Método auxiliar que encontra o índice inicial do valor de uma moeda dentro da URL"""
-        # Retorna o índice inicial do valor da moeda (após a chave de busca)
+        """Encontra o índice inicial do valor de uma moeda dentro da URL."""
+        # Retorna a posição onde a moeda foi encontrada na URL somada ao seu tamanho,
+        # para obter a posição do valor correspondente
         return self.url.find(moedaBuscada) + len(moedaBuscada)
 
-
     def extrairArgumentos(self):
-        """Método que extrai os argumentos (substrings que representam os valores das moedas) da URL"""
-        
-        # Define as palavras-chave que identificam as moedas na URL
+        """Extrai os argumentos (moeda de origem e destino) da URL."""
+
+        # Define as chaves de busca para identificar os argumentos na URL
         buscaMoedaOrigem = "moedaorigem="
         buscaMoedaDestino = "moedadestino="
 
-        # Encontra a posição INICIAL do valor correspondente da substring 'real' na URL
+        # Encontra a posição inicial e final da moeda de origem na URL
         indiceInicialMoedaOrigem = self.encontraIndiceInicial(buscaMoedaOrigem)
-        # Encontra o índice final do valor da moeda de origem, que é o próximo '&'
         indiceFinalMoedaOrigem = self.url.find("&", indiceInicialMoedaOrigem)
-        
-        # Separa a substring correspondente à moeda de origem
-        moedaOrigem = self.url[indiceInicialMoedaOrigem : indiceFinalMoedaOrigem]  # Exemplo: 'real'
-        
-        # Encontra o índice inicial do valor correspondente à moeda de destino na URL
-        indiceInicialMoedaDestino = self.encontraIndiceInicial(buscaMoedaDestino)
-        # Encontra o índice final do valor da moeda de destino (próximo '&' ou final da string)
-        indiceFinalMoedaDestino = self.url.find("&", indiceInicialMoedaDestino)
-        
-        # Se não houver '&' após a moeda de destino, significa que ela está no final da string
-        if indiceFinalMoedaDestino == -1:
-            indiceFinalMoedaDestino = len(self.url)  # Define o final da string como limite
+        # Se não encontrar o caractere '&', significa que está no final da URL
+        if indiceFinalMoedaOrigem == -1:
+            indiceFinalMoedaOrigem = len(self.url)
 
-        # Separa a substring correspondente à moeda de origem
-        moedaOrigem = self.url[indiceInicialMoedaOrigem : indiceFinalMoedaOrigem]  # Exemplo: 'real'
-    
-        # Separa a substring correspondente à moeda de destino
-        moedaDestino = self.url[indiceInicialMoedaDestino: indiceFinalMoedaDestino]
-        
-        # Retorna as moedas de origem e destino extraídas da URL
+        # Extrai a moeda de origem da URL
+        moedaOrigem = self.url[indiceInicialMoedaOrigem:indiceFinalMoedaOrigem]
+
+        # Encontra a posição inicial e final da moeda de destino na URL
+        indiceInicialMoedaDestino = self.encontraIndiceInicial(buscaMoedaDestino)
+        indiceFinalMoedaDestino = self.url.find("&", indiceInicialMoedaDestino)
+        # Se não encontrar o caractere '&', significa que está no final da URL
+        if indiceFinalMoedaDestino == -1:
+            indiceFinalMoedaDestino = len(self.url)
+
+        # Extrai a moeda de destino da URL
+        moedaDestino = self.url[indiceInicialMoedaDestino:indiceFinalMoedaDestino]
+
+        # Caso a moeda de origem seja "moedadestino", troca para "real"
+        if moedaOrigem == "moedadestino":
+            self.trocaMoedaOrigem()
+            moedaOrigem = "real"
+
+        # Retorna as moedas extraídas
         return moedaOrigem, moedaDestino
 
-    def encontraIndiceInicial(self, moedaBuscada):
-        """Método auxiliar que encontra o índice inicial do valor de uma moeda dentro da URL"""
-        # Retorna o índice inicial do valor da moeda (após a chave de busca)
-        return self.url.find(moedaBuscada) + len(moedaBuscada)
+    def trocaMoedaOrigem(self):
+        """Troca 'moedadestino' por 'real' na URL."""
+        # Substitui a primeira ocorrência de "moedadestino" por "real" na URL
+        self.url = self.url.replace("moedadestino", "real", 1)
 
+    def extraiValor(self):
+        """Extrai o valor da URL."""
+        buscaValor = "valor="
+        # Encontra o índice inicial onde o valor numérico começa
+        indiceInicialValor = self.encontraIndiceInicial(buscaValor)
+        # Captura o valor correspondente na URL a partir do índice encontrado
+        valor = self.url[indiceInicialValor:]
+        return valor
