@@ -24,13 +24,13 @@ import ExtratorArgumentosUrl
 importlib.reload(ExtratorArgumentosUrl) 
 
 # Criando variável para receber a URL
-url = "https://bytebank.com?cambio?moedaorigem=real&moedadestino=dolar&valor=700"
+url = "https://bytebank.com/cambio?moedaoRigem=moedadestino&moedadestino=dolar&valor=1500"
 
 # Criando a instância(objeto) da classe "ExtratorArgumentoUrl()"
 argumentosUrl = ExtratorArgumentosUrl.ExtratorArgumentoUrl(url)
 
 # Extraindo os argumentos de moedaOrigem e moedaDestino
 moedaOrigem, moedaDestino = argumentosUrl.extrairArgumentos()
-
+valor = argumentosUrl.extraiValor()
 # Exibindo argumentos: moedaOrigem(real) e moedaDestino(dolar)
-print(f'Moeda Origem: {moedaOrigem}\nMoeda Destino: {moedaDestino}')
+print(f'Moeda Origem: {moedaOrigem}\nMoeda Destino: {moedaDestino}\nValor: {valor}')
