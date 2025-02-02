@@ -14,8 +14,10 @@ class ExtratorArgumentoUrl:
     @staticmethod
     def urlEhValida(url):
         """Verifica se a URL fornecida é válida."""
-        # Retorna True se a URL não for vazia (string não vazia é avaliada como True)
-        return bool(url)
+        if url and url.startswith()
+            return True
+        else:
+            return False
 
     def encontraIndiceInicial(self, moedaBuscada):
         """Encontra o índice inicial do valor de uma moeda dentro da URL."""
