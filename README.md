@@ -26,13 +26,3 @@ Moeda Origem: dolar
 Moeda Destino: real
 ```
 
-## Como Contribuir
-1. Faça um fork do repositório.
-2. Crie uma branch para suas modificações (`git checkout -b minha-modificacao`).
-3. Faça suas alterações e commit (`git commit -m "Minha melhoria"`).
-4. Envie para o repositório remoto (`git push origin minha-modificacao`).
-5. Abra um Pull Request.
-
-## Licença
-Este projeto está sob a licença MIT.
-
