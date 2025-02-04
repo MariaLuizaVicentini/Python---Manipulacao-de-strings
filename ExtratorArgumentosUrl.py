@@ -11,45 +11,46 @@ class ExtratorArgumentoUrl:
             # Se a URL for inválida, lança uma exceção do tipo LookupError
             raise LookupError("Erro de pesquisa: URL inválida!")
 
+    def __len__(self):
+        """Retorna o tamanho da URL"""
+        return len(self.url)
+
+    def __str__(self):
+        # Extrai os argumentos da URL para formatação da representação textual
+        moedaOrigem, moedaDestino = self.extrairArgumentos()
+        representacaoString = "\n Valor: {}\n Moeda Origem: {}\n Moeda Destino: {}\n".format(self.extraiValor(), moedaOrigem, moedaDestino)
+        return representacaoString
+
+    def __eq__(self, outraIntancia):
+        """Compara se duas instâncias da classe possuem a mesma URL."""
+        return self.url == outraIntancia.url
+        
     @staticmethod
     def urlEhValida(url):
         """Verifica se a URL fornecida é válida."""
-        if url and url.startswith()
-            return True
-        else:
-            return False
+        return url and url.startswith("https://bytebank.com")
 
     def encontraIndiceInicial(self, moedaBuscada):
         """Encontra o índice inicial do valor de uma moeda dentro da URL."""
-        # Retorna a posição onde a moeda foi encontrada na URL somada ao seu tamanho,
-        # para obter a posição do valor correspondente
         return self.url.find(moedaBuscada) + len(moedaBuscada)
 
     def extrairArgumentos(self):
         """Extrai os argumentos (moeda de origem e destino) da URL."""
-
-        # Define as chaves de busca para identificar os argumentos na URL
         buscaMoedaOrigem = "moedaorigem="
         buscaMoedaDestino = "moedadestino="
 
-        # Encontra a posição inicial e final da moeda de origem na URL
+        # Encontra a posição da moeda de origem
         indiceInicialMoedaOrigem = self.encontraIndiceInicial(buscaMoedaOrigem)
         indiceFinalMoedaOrigem = self.url.find("&", indiceInicialMoedaOrigem)
-        # Se não encontrar o caractere '&', significa que está no final da URL
         if indiceFinalMoedaOrigem == -1:
             indiceFinalMoedaOrigem = len(self.url)
-
-        # Extrai a moeda de origem da URL
         moedaOrigem = self.url[indiceInicialMoedaOrigem:indiceFinalMoedaOrigem]
 
-        # Encontra a posição inicial e final da moeda de destino na URL
+        # Encontra a posição da moeda de destino
         indiceInicialMoedaDestino = self.encontraIndiceInicial(buscaMoedaDestino)
         indiceFinalMoedaDestino = self.url.find("&", indiceInicialMoedaDestino)
-        # Se não encontrar o caractere '&', significa que está no final da URL
         if indiceFinalMoedaDestino == -1:
             indiceFinalMoedaDestino = len(self.url)
-
-        # Extrai a moeda de destino da URL
         moedaDestino = self.url[indiceInicialMoedaDestino:indiceFinalMoedaDestino]
 
         # Caso a moeda de origem seja "moedadestino", troca para "real"
@@ -57,19 +58,15 @@ class ExtratorArgumentoUrl:
             self.trocaMoedaOrigem()
             moedaOrigem = "real"
 
-        # Retorna as moedas extraídas
         return moedaOrigem, moedaDestino
 
     def trocaMoedaOrigem(self):
         """Troca 'moedadestino' por 'real' na URL."""
-        # Substitui a primeira ocorrência de "moedadestino" por "real" na URL
         self.url = self.url.replace("moedadestino", "real", 1)
 
     def extraiValor(self):
         """Extrai o valor da URL."""
         buscaValor = "valor="
-        # Encontra o índice inicial onde o valor numérico começa
         indiceInicialValor = self.encontraIndiceInicial(buscaValor)
-        # Captura o valor correspondente na URL a partir do índice encontrado
         valor = self.url[indiceInicialValor:]
         return valor
